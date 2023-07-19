@@ -1,15 +1,3 @@
-<style>
-table {
-  border-collapse: collapse;
-}
-
-table td, table th {
-  border: 1px solid black;
-  padding: 8px;
-}
-</style>
-
-
 
 
 This document tries to illustrate how the non-recursive Hanoi code works by tracing the stacks. The idea of this code is to mimic the process of functional calls in operation system. 
