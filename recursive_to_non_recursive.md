@@ -2,7 +2,7 @@ We have shown how to convert a recursive hanoi code into a non-recursive code.
 This ducoment tries to illustrate how to deal with a more complex case.
 
 
-# The recursive fg code
+# 1. The recursive fg code
 
 ```c
 int f(int n) {
@@ -17,12 +17,12 @@ int g(int n) {
 ```
 we can see from the code above that f calls g and g calls f, so this makes the problem more challenging. Also there is a return value for the function which is different to the hanoi problem.
 
-# The basic idea
+# 2. The basic idea
 
 We can solve this problem based on the same idea as that for hanoi problem, i.e. state machine.
 We treat each function/system call as a state, then we push the state into the stack to schedule the function calls.
 
-## How to define the state machine
+## 2.1 How to define the state machine
 
 Each state machine contains the following elements: 
 + input parameters, here it is n
@@ -31,7 +31,7 @@ Each state machine contains the following elements:
 + the return value of a function call
 + program counter: pc pointer that points to the current execution position or line number of the current function/program
 
-## Code modification
+## 2.2 Code modification
 
 To better understand the transitions between states, I slightly modify the code. These modifications do not affect the code execution and results.  
 
@@ -55,7 +55,7 @@ int g(int n) {
 }
 
 ```
-## State definition
+## 2.3 State definition
 
 Here we can see that we use local variables a, b and r to represent the return values.
 
@@ -70,14 +70,14 @@ typedef struct
     /* data */
 }Frame;
 ```
-## Return values
+## 2.4 Return values
 
 It is important to know that stk[top-1] is the function call that call another function call corresponds to stk[top], 
 i.e. stk[top-1] is the parent call of stk[top]. Therefore, we can assign the return value of stk[top] to a or b of stk[top-1].
 
 We notice that if the function call is f, its value is always assigned to a of its parent call; if the function call is g, its return value is always assigned to b of its parent call (f or g).
 
-# Solution
+# 3. Solution
 
 We define the following three macros to manipulate the stack.
 ```c
@@ -168,6 +168,6 @@ void fg_nr(char func_name, int n){
 
 This code runs successfully and prints out the return value 'r' of each function. Note the final return value is stored in the Frame at stk[0].
 
-# Conclusion
+# 4. Conclusion
 
 By using the concept of a state machine, we can convert recursive code into non-recursive code. This process mimics the compilation process.
