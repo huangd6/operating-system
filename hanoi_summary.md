@@ -24,7 +24,7 @@ You can search Hanoi problem from wikipedia, here I am not going to introduce it
 
 According to the lecturer of operation system, there exist a correspondence between a normal c code and another if-goto grammar. This correspondence is based on some complex programming theory. 
 
-Here we use the following non-recursive code given by the lecturer to illustrate the idea. For the recursive Hanoi code, its states are the input parameters n, from, to, via and its current position for system call. Here we use PC (program count) to indicate the position of the system call. For example, call(n=1, from=C, to=B, via=A, pc=0) means the input  n=1, from=C, to=B, via=A and program execute to line 3. call(n=1, from=C, to=B, via=A, pc=1) means the input n=1, from=C, to=B, via=A, and program execute to line 5. Both calls are the same function call, but execute to different lines.
+Here we use the following non-recursive code given by the lecturer to illustrate the idea. For the recursive Hanoi code, its states are the input parameters n, from, to, via and its current position for function/system call. Here we use PC (program counter) to indicate the position of the function/system call. For example, call(n=1, from=C, to=B, via=A, pc=0) means the input  n=1, from=C, to=B, via=A and program execute to line 3. call(n=1, from=C, to=B, via=A, pc=1) means the input n=1, from=C, to=B, via=A, and program execute to line 5. Both calls are the same function call, but execute to different lines.
 
 
 
@@ -58,15 +58,17 @@ Here we use the following non-recursive code given by the lecturer to illustrate
 
  
 The key points of the code
-1. the struct Frame is used to store all the states of a functional call, especially pc means the program count of a function call
+1. the struct Frame is used to store all the states of a functional call, especially pc means the program counter of a function call
 2. the macro call(…) pushes the states into the stack, note the top variable is always pointing to the top of the stack, if top<stk, the stack is empty
 3. the macro ret() pop out one function call from the stack
-4. the macro goto() moves the pc of the current state machine. 
+4. the macro goto() moves the pc of the current state. 
 5. in the for loop, f-pc is first incremented, then top is assigned to f, after that f is compared with stk
 
 Here we track the change of the stack for the following function call
 
+```c
 hanoi(2, 'A', 'B', 'C');
+```
 
 step 0.1, we execute to line 14. 
 ```c
