@@ -1,5 +1,5 @@
 We have shown how to convert a recursive hanoi code into a non-recursive code.
-This ducoment tries to illustrate how to deal with a more complex case.
+This ducoment tries to illustrate how to deal with a more complex case and more generalized cases.
 
 
 # 1. The recursive fg code
@@ -168,6 +168,74 @@ void fg_nr(char func_name, int n){
 
 This code runs successfully and prints out the return value 'r' of each function. Note the final return value is stored in the Frame at stk[0].
 
-# 4. Conclusion
+# 4. Generalization 
 
-By using the concept of a state machine, we can convert recursive code into non-recursive code. This process mimics the compilation process.
+In the case above, the return values of f is always assigned to a and the return values of g is always assigned to b. But in general cases, the return value of a function may be assigned to different variables. Therefore we need to pass the pointer of the variable to be assigned in the function call. So we modify the frame as follows:
+
+```c
+typedef struct
+{
+    int pc, n, a, b, r;
+    int *rp; /*pointer to the return variable*/
+    char func_name;
+    
+}Frame2;
+```
+Another observation is that we can merge the computation of local variables to a single case, since the computation of local variables are invisible outside the function call. The following shows how to deal with general cases.
+
+```c
+typedef struct
+{
+    int pc, n, a, b, r;
+    int *rp; 
+    char func_name;
+    
+}Frame2;
+
+#define call(...) ({ *(++top) = (Frame2) { .pc = 0, __VA_ARGS__ }; })
+#define ret()     ({ top--; })
+/*#define goto(loc) ({ f->pc = (loc) - 1; })*/
+
+int fg_2(char func_name, int n){
+    Frame2 stk[64], *top=stk-1;
+    int return_value;
+    call(n,0,0,0,&return_value,func_name);
+    for(Frame2 *f; (f=top)>=stk; f->pc++){
+        n=f->n; func_name=f->func_name;
+        if (func_name=='f'){
+            switch (f->pc)
+            {
+            case 0: if(n<=1) {f->r=1; *(f->rp)=f->r; ret();} break;
+            case 1: call(n-1,0,0,0,&(f->a),'f'); break;
+            case 2: call(n-2,0,0,0,&(f->b),'g'); break;
+            case 3: *(f->rp)=f->a+f->b; ret(); break;
+            default:
+                break;
+            }
+        }
+        if (func_name=='g')
+        {
+            switch (f->pc)
+            {
+            case 0: if(n<=1) {f->r=1; *(f->rp)=f->r; ret();} break;
+            case 1: call(n+1,0,0,0,&(f->b),'f'); break;
+            case 2: call(n-1,0,0,0,&(f->a),'g'); break;
+            case 3: *(f->rp)=f->a+f->b; ret();  break;
+            default:
+                break;
+            }
+        }
+        
+    }
+
+    return return_value;
+
+}
+```
+
+
+
+
+# 5. Conclusion
+
+By using the concept of a state machine, we can convert recursive code into non-recursive code. This process mimics the compilation process. Note that the state of a function includes its input parameters, local variables, global variables, program counter, function name and importantly, the variable for its return value.
